@@ -1,70 +1,96 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
-export default function HomeScreen() {
+export default function App() {
+  const [input, setInput] = useState(""); // Initialize input variable
+  const onButtonPressed = (value) => {
+    if (value === "=") {
+      try {
+        setInput(eval(input).toString()); // Evaluate the expression
+      } catch (error) {
+        setInput("error");
+        setTimeout(() => {
+          setInput(""); // Clear input after second delay delay
+        }, 1000); 
+      }
+    } else if (value === "c") {
+      setInput(""); // Clear input
+    } else {
+      setInput(input + value); // Concatenate input
+    }
+  }
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.screenContainer}>
+        <Text style={styles.screenText}>
+          {input}
+        </Text>
+      </View>
+      <View style={styles.buttonsContainer}>
+        {["c", "+-", "%", "/", "7", "8", "9", "*", "4", "5", "6", "-", "1", "2", "3", "+", "0", ".", "="].map(
+          (item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={item === "=" ? styles.equalsButton : styles.button}
+              onPress={() => onButtonPressed(item)}
+            >
+              <Text style={styles.buttonText}>{item}</Text>
+            </TouchableOpacity>
+          )
+        )}
+      </View>
+    </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: "#3a384c",
+    padding: 10,
+    borderColor:"#5700e9",
+    borderWidth:5,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  screenContainer: {
+    flex:1,
+    width:"100%",
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
+    backgroundColor: "#009c55",
+    borderRadius: 20,
+    marginBottom: 15,//from the buttons
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  screenText: {
+    fontSize: 40,
+    color: "#FFFFFF",
   },
+  buttonsContainer: {
+    justifyContent:"center",
+    alignItems:"center",
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  button: {
+    width: 85,
+    height: 85,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#e800ce",
+    margin: 2,
+    borderRadius: 85,
+    borderColor: "#3a384c",
+    borderWidth:10,
+  },
+  equalsButton: {
+    flex:1,
+    height:60 ,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ff0000",
+    borderRadius: 70,
+  },
+  buttonText: {
+    fontSize: 30,
+    color: "#FFFFFF",
+  }
 });
